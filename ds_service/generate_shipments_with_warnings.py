@@ -149,13 +149,17 @@ for idx, row in shipment_info_red.iterrows():
     shipment_json['port_destination_name'].append(row['pod_name'])
     shipment_json['port_destination_country'].append(row['pod_land'])
     shipment_json['destination_location'].append(row['empfaenger_ort'])
+    shipment_json['port_of_loading'].append(row['pol_name'])
+    shipment_json['port_loading_country'].append(row['pol_land'])
     shipment_json['product_name'].append(row['bb_name'])
 
-    warning_json['last_location'].append((row['last_latitude'], row['last_longitude']))
-    warning_json['predicted_current_location'].append((row['predicted_latitude'], row['predicted_longitude']))
-    warning_json['warning_text'].append(row["warning"])
-    warning_json['event'].append(row['Event'])
-    warning_json['time'].append(time_)
+    warning_json = {
+        'last_location'].append((row['last_latitude'], row['last_longitude']))
+        warning_json['predicted_current_location'].append((row['predicted_latitude'], row['predicted_longitude']))
+        warning_json['warning_text'].append(row["warning"])
+        warning_json['event'].append(row['Event'])
+        warning_json['time'].append(time_)
+    }
 
 
 
