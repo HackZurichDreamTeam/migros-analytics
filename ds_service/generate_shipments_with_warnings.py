@@ -56,6 +56,7 @@ def init_shipment_json():
     shipment_json['port_destination_country'] = []
     shipment_json['destination_location'] = []
     shipment_json['product_name'] = []
+    shipment_json['route_coord'] = []
 
     return shipment_json
 
@@ -153,6 +154,7 @@ for idx, row in shipment_info_red.iterrows():
     shipment_json['port_of_loading'].append(row['pol_name'])
     shipment_json['port_loading_country'].append(row['pol_land'])
     shipment_json['product_name'].append(row['bb_name'])
+    shipment_json['route_coord'].append(row['route_coord'])
 
     warning_json = {
         'warning_id': idx,

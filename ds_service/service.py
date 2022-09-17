@@ -17,11 +17,18 @@ from ds_service.predict_location import predict_future_location
 
 
 def get_shipment_information(selected_date: str, current_time="2021-08-15 00:00") -> pd.DataFrame:
+    """
+    Returns the shipment information for the current_time (this is the "now"), selected_date should be 
+    equal or after current_time, if a later date is given the location of ships for that later date will 
+    be estimated.
+    """
     if selected_date is None:
         selected_date = current_time
 
     selected_date = pd.to_datetime(selected_date)
     current_time = pd.to_datetime(current_time)
+    
+    assert selected_date >= current_time
 
     ##
     # Read data
@@ -49,12 +56,13 @@ def get_shipment_information(selected_date: str, current_time="2021-08-15 00:00"
         last_info = shiptrack[shiptrack["imo_number"]==ship_label]
         last_info = last_info[last_info["date"]<=current_time]
         if len(last_info)>0:
-            info = pd.DataFrame(last_info.iloc[0])
+            route_lat = np.array(last_info["latitude"])
+            route_long = np.array(last_info["longitude"])
+            info = pd.DataFrame(last_info.iloc[0]).T
+            info['route_coord'] = str([(r_l, r_lo) for r_l, r_lo in zip(route_lat, route_long)])
             frames.append(info)
-    shipment_info = pd.concat(frames, axis=1).T
+    shipment_info = pd.concat(frames, axis=0)
     shipment_info = shipment_info.rename(columns={'longitude': 'last_longitude', 'latitude': 'last_latitude'})
-
-
 
 
     # get shipment information
@@ -65,7 +73,7 @@ def get_shipment_information(selected_date: str, current_time="2021-08-15 00:00"
     shipment_info['predicted_latitude'] = shipment_info['predicted_location'].apply(lambda x: x[0])
     shipment_info['predicted_longitude'] = shipment_info['predicted_location'].apply(lambda x: x[1])
 
-    col_to_keep = ['predicted_latitude', 'predicted_longitude', 'last_latitude', 'last_longitude', 'schiff', 'empfaenger', 'empfaenger_plz', 'empfaenger_ort', 'termin_empfaenger', 'bb_name', 'pod_name', 'pod_land']
+    col_to_keep = ['predicted_latitude', 'predicted_longitude', 'last_latitude', 'last_longitude', 'schiff', 'empfaenger', 'empfaenger_plz', 'empfaenger_ort', 'termin_empfaenger', 'bb_name', 'pod_name', 'pod_land', 'route_coord']
 
     shipment_info = shipment_info[col_to_keep]
 
