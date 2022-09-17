@@ -52,7 +52,7 @@ pirates_warning_path = 'scraped_pirates.csv'
 shipment_info = get_shipment_information(time_)
 
 weather_warning = pd.read_csv(weather_warning_path)
-pirates_warning = pd.read_csv
+pirates_warning = pd.read_csv(pirates_warning_path)
 
 n_row = shipment_info.shape[0]
 #shipment_info = shipment_info[:int(n_row/2)]
@@ -76,18 +76,18 @@ for index, row in shipment_info[['last_latitude', 'last_longitude', 'predicted_l
         shipment_info.loc[ct, 'warning_distance'] = distance_computed
         shipment_info.loc[ct, 'Event'] = "Weather Warning"
 
-    # for ct, loc in pirates_warning[['geo_location']].iterrows():
-    #     loc = loc['geo_location']
-    #     # float(thetext.split(,)[0][1:]) and the other one float(thetext.split(,)[1][[:-1]])
-    #     lat_w = float(loc.split(',')[0][1:])
-    #     long_w =  float(loc.split(',')[1][1:-1])
+    for ct, loc in pirates_warning[['geo_location']].iterrows():
+        loc = loc['geo_location']
+        # float(thetext.split(,)[0][1:]) and the other one float(thetext.split(,)[1][[:-1]])
+        lat_w = float(loc.split(',')[0][1:])
+        long_w =  float(loc.split(',')[1][1:-1])
 
-    #     distance_computed = check_if_ship_in_danger_zone(last_lat, last_long, pred_lat, pred_long, lat_w, long_w)
+        distance_computed = check_if_ship_in_danger_zone(last_lat, last_long, pred_lat, pred_long, lat_w, long_w)
         
 
-    #     shipment_info.loc[ct, 'warning'] = weather_warning.loc[ct, 'Event_type']
-    #     shipment_info.loc[ct, 'warning_distance'] = distance_computed
-    #     shipment_info.loc[ct, 'Event'] = "Weather Warning"
+        shipment_info.loc[ct, 'warning'] = pirates_warning.loc[ct, 'text']
+        shipment_info.loc[ct, 'warning_distance'] = distance_computed
+        shipment_info.loc[ct, 'Event'] = "Piracy Warning"
 
     if int((index/n_row)*1000) % 100 == 0:
         print(f"progress: {int((index/n_row)*100)}")
