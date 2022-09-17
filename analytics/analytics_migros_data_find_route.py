@@ -19,10 +19,11 @@ os.chdir(project_root)
 # Set data science variables
 orders_path =  "data/gis_opex_international_bestellu.csv"
 
+transport_info_path = "data/gis_opex_international_raw.csv"
 #%%
 
 orders = pd.read_csv(orders_path, sep=';')
-
+trans_info = pd.read_csv(transport_info_path, sep=';')
 print(orders.info())
 
 #%%
@@ -38,4 +39,4 @@ print(orders[['termin_lieferant', 'termin_empfaenger']])
 print(pd.to_datetime(orders['termin_lieferant']).max())
 
 
-#print(orders['termin_lieferant'].min())
+
