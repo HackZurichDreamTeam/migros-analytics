@@ -35,5 +35,7 @@ print(orders['bb_name'].value_counts())
 print(orders[['termin_lieferant', 'termin_empfaenger']])
 
 #%%
-print(orders['termin_lieferant'].astype(datetime).max())
-print(orders['termin_lieferant'].min())
+print(pd.to_datetime(orders['termin_lieferant']).max())
+
+
+#print(orders['termin_lieferant'].min())
