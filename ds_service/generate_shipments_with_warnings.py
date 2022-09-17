@@ -56,6 +56,7 @@ def init_shipment_json():
     shipment_json['port_destination_country'] = []
     shipment_json['destination_location'] = []
     shipment_json['product_name'] = []
+    shipment_json['route_coord'] = []
 
     return shipment_json
 
@@ -150,6 +151,7 @@ for idx, row in shipment_info_red.iterrows():
     shipment_json['port_destination_country'].append(row['pod_land'])
     shipment_json['destination_location'].append(row['empfaenger_ort'])
     shipment_json['product_name'].append(row['bb_name'])
+    shipment_json['route_coord'].append(row['route_coord'])
 
     warning_json['last_location'].append((row['last_latitude'], row['last_longitude']))
     warning_json['predicted_current_location'].append((row['predicted_latitude'], row['predicted_longitude']))
