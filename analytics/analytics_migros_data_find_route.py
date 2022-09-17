@@ -61,3 +61,8 @@ shiptrack_red = shiptrack_red.merge(bestellu, left_on='bestellnummer', right_on=
 # shiptrack join imo_nr raw join on bestellnummer on bestellu
 
 shiptrack_red['name'].unique()
+
+
+#%%
+shiptrack_red.to_csv('current_shipment.csv', index=False)
+# %%

@@ -45,7 +45,7 @@ def get_shipment_information(selected_date: str) -> pd.DataFrame:
     shipment_info = shipment_info.merge(raw, left_on='imo_number', right_on='imo_nr')
     shipment_info = shipment_info.merge(bestellu, left_on='bestellnummer', right_on='bestellnummer')
 
-    col_to_keep = ['longitude', 'latitude', 'shiff', 'empfaenger', 'empfaenger_plz', 'empfaenger_ort', 'termin_empfaenger', 'bb_name']
+    col_to_keep = ['latitude', 'longitude', 'shiff', 'empfaenger', 'empfaenger_plz', 'empfaenger_ort', 'termin_empfaenger', 'bb_name']
 
     shipment_info = shipment_info[col_to_keep]
 
@@ -59,3 +59,4 @@ def read_data(path: str) -> pd.DataFrame:
     return df
 
 if __name__ == '__main__':
+    pass
