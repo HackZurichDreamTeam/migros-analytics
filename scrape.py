@@ -11,20 +11,20 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 
+from convert_to_coord import convert_to_coord
+
 #get driver start
 def scrapeWeather():
     driver = webdriver.Chrome(ChromeDriverManager().install())
     driver.get("https://severeweather.wmo.int/v2/list.html") #This is a dummy website URL
     try:
-        #wait for javascript data to fetch
         elem = WebDriverWait(driver, 30).until(
     EC.presence_of_element_located((By.CLASS_NAME, "dataTables_scrollBody")) #This is a dummy element
     )
     finally:
-        #select 60 entries
+        print('loaded')
         driver.find_element_by_xpath("//select/option[@value='60']").click()
         soup = BeautifulSoup(driver.page_source, 'html.parser')
-
     """Scraper getting each row"""
     all = soup.findAll("tbody")[2]
     row = all.findAll('tr')
@@ -59,5 +59,6 @@ def scrapeWeather():
 
     df = pd.DataFrame(rest_info, columns = ['Event_type','Issued_time','Country','Areas','Regions','Date'])
     df['Issued_time'] = df["Issued_time"].apply(lambda x: x.split("#")[0])
+    df['coordinates'] = convert_to_coord(df['Regions'] +", "+ df["Areas"] + ", " + df["Country"])
     df.to_csv("scraped_weather.csv",mode='a', index=False,header=False)
     return
