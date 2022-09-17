@@ -2,10 +2,18 @@ import os
 import sys
 import datetime as dt
 import timedelta
-from predict_location import predict_future_location
 import numpy as np
 
 import pandas as pd
+
+project_root = sys.path[0]
+while os.path.basename(project_root) != "data_science":
+    project_root = os.path.dirname(project_root)
+sys.path.insert(0, project_root)
+
+os.chdir(project_root)
+
+from ds_service.predict_location import predict_future_location
 
 
 def get_shipment_information(selected_date: str, current_time="2021-08-15 00:00") -> pd.DataFrame:

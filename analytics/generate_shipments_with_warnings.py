@@ -91,7 +91,19 @@ print(shipment_info['warning_distance'].value_counts())
 treshold_dist = 4000
 
 shipment_info_red = shipment_info[shipment_info['warning_distance'] < treshold_dist]
+shipment_info_red['warning_id'] = shipment_info_red.index
 print(shipment_info_red.shape)
+
+##% Do some postprocessing
+
+rename = {
+    'pod_name': 'port_destination_name',
+    'pod_land': 'port_destination_land',
+    'pol_name': 'port_loading_name',
+    'pol_land': 'port_loading_land',
+}
+
+shipment_info_red = shipment_info_red.rename(rename)
 
 #%%
 
@@ -105,8 +117,10 @@ print(shipment_info_red.columns)
 shipment_json = dict()
 warning_json = dict()
 
-for idx, row in shipment_info_red.iterrows():
-    shipment_json['warning_id'] = idx
+for name, values in shipment_info_red.iteritems():
+
+    if name in ['warning_id', '']
+    shipment_json[name] =
     shipment_json['port_destination_name'] = row['pod_name']
     shipment_json['port_destination_land'] = row['pod_land']
     shipment_json['empfaenger_ort'] = row['empfaenger_ort']

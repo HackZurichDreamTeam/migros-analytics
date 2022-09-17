@@ -1,9 +1,9 @@
+# %% import packagaces
 import sys
 import os
 import time
 from math import radians, cos, sin, asin, sqrt
 import json
-from service import get_shipment_information
 
 import pandas as pd
 import numpy as np
@@ -16,7 +16,9 @@ sys.path.insert(0, project_root)
 
 os.chdir(project_root)
 
+from ds_service.service import get_shipment_information
 
+# %% Define script helpers
 def distance(lat1, lat2, lon1, lon2):
 
     # The math module contains a function named
@@ -38,7 +40,8 @@ def distance(lat1, lat2, lon1, lon2):
 
     # calculate the result
     return(c * r)
-    
+
+
 def check_if_ship_in_danger_zone(last_lat, last_long, pred_lat, pred_long, lat_w, long_w):
     x_lat = [last_lat + n/10*(pred_lat-last_lat) for n in range(10)]
     x_long = [last_long + n/10*(pred_long - last_long) for n in range(10)]
@@ -46,6 +49,27 @@ def check_if_ship_in_danger_zone(last_lat, last_long, pred_lat, pred_long, lat_w
     return min(dist_vector)
 
 
+def init_shipment_json():
+    shipment_json = dict()
+    shipment_json['warning_id'] = []
+    shipment_json['port_destination_name'] = []
+    shipment_json['port_destination_country'] = []
+    shipment_json['destination_location'] = []
+    shipment_json['product_name'] = []
+
+    return shipment_json
+
+def init_warning_json():
+    warning_json = dict()
+    warning_json['last_location'] = []
+    warning_json['predicted_current_location'] = []
+    warning_json['warning_text'] = []
+    warning_json['event'] = []
+    warning_json['time'] = []
+
+    return warning_json
+
+# %%
 time_ = None
 weather_warning_path = 'scraped_weather.csv'
 pirates_warning_path = 'scraped_pirates.csv'
@@ -70,7 +94,7 @@ for index, row in shipment_info[['last_latitude', 'last_longitude', 'predicted_l
         long_w =  float(loc.split(',')[1][1:-1])
 
         distance_computed = check_if_ship_in_danger_zone(last_lat, last_long, pred_lat, pred_long, lat_w, long_w)
-        
+
 
         shipment_info.loc[ct, 'warning'] = weather_warning.loc[ct, 'Event_type']
         shipment_info.loc[ct, 'warning_distance'] = distance_computed
@@ -83,7 +107,7 @@ for index, row in shipment_info[['last_latitude', 'last_longitude', 'predicted_l
         long_w =  float(loc.split(',')[1][1:-1])
 
         distance_computed = check_if_ship_in_danger_zone(last_lat, last_long, pred_lat, pred_long, lat_w, long_w)
-        
+
 
         shipment_info.loc[ct, 'warning'] = pirates_warning.loc[ct, 'text']
         shipment_info.loc[ct, 'warning_distance'] = distance_computed
@@ -110,7 +134,6 @@ shipment_info_red = shipment_info[shipment_info['warning_distance'] < treshold_d
 print(shipment_info_red.shape)
 
 #%%
-
 shipment_info.to_pickle('data_for_backend/shipment_red_info_weather_warning.pkl')
 shipment_info_red.to_pickle('data_for_backend/shipment_info_weather_warning.pkl')
 
@@ -118,21 +141,21 @@ shipment_info_red.to_pickle('data_for_backend/shipment_info_weather_warning.pkl'
 #%%
 # generate a json
 print(shipment_info_red.columns)
-shipment_json = dict()
-warning_json = dict()
+shipment_json = init_shipment_json()
+warning_json = init_warning_json()
 
 for idx, row in shipment_info_red.iterrows():
-    shipment_json['warning_id'] = idx
-    shipment_json['port_destination_name'] = row['pod_name']
-    shipment_json['port_destination_country'] = row['pod_land']
-    shipment_json['destination_location'] = row['empfaenger_ort']
-    shipment_json['product_name'] = row['bb_name']
+    shipment_json['warning_id'].append(idx)
+    shipment_json['port_destination_name'].append(row['pod_name'])
+    shipment_json['port_destination_country'].append(row['pod_land'])
+    shipment_json['destination_location'].append(row['empfaenger_ort'])
+    shipment_json['product_name'].append(row['bb_name'])
 
-    warning_json['last_location'] = (row['last_latitude'], row['last_longitude'])
-    warning_json['predicted_current_location'] = (row['predicted_latitude'], row['predicted_longitude'])
-    warning_json['warning_text'] = row["warning"]
-    warning_json['event'] = row['Event']
-    warning_json['time'] = time_
+    warning_json['last_location'].append((row['last_latitude'], row['last_longitude']))
+    warning_json['predicted_current_location'].append((row['predicted_latitude'], row['predicted_longitude']))
+    warning_json['warning_text'].append(row["warning"])
+    warning_json['event'].append(row['Event'])
+    warning_json['time'].append(time_)
 
 
 
@@ -147,4 +170,7 @@ with open('data_for_backend/shipments.json', 'w') as fh:
 
 with open('data_for_backend/warnings.json', 'w') as fh:
     json.dump(warning_json, fh)
+
+
+
 # %%
