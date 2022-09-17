@@ -142,19 +142,21 @@ shipment_info_red.to_pickle('data_for_backend/shipment_info_weather_warning.pkl'
 #%%
 # generate a json
 print(shipment_info_red.columns)
-shipment_json_lst = init_shipment_json()
-warning_json_lst = init_warning_json()
+shipment_json_lst = []
+warning_json_lst = []
 
 for idx, row in shipment_info_red.iterrows():
     shipment_json = {
         'warning_id': idx,
-        'port_destination_name' = row['pod_name'])
-    shipment_json['port_destination_country'].append(row['pod_land'])
-    shipment_json['destination_location'].append(row['empfaenger_ort'])
-    shipment_json['port_of_loading'].append(row['pol_name'])
-    shipment_json['port_loading_country'].append(row['pol_land'])
-    shipment_json['product_name'].append(row['bb_name'])
-    shipment_json['route_coord'].append(row['route_coord'])
+        'port_destination_name': row['pod_name'],
+        'port_destination_country' : row['pod_land'],
+        'destination_location': row['empfaenger_ort'],
+        'port_of_loading': row['pol_name'],
+        'port_loading_country': row['pol_land'],
+        'product_name': row['bb_name'],
+        'route_coord': json.loads(row['route_coord'])}
+
+    shipment_json_lst.append(shipment_json)
 
     warning_json = {
         'warning_id': idx,
@@ -172,17 +174,17 @@ for idx, row in shipment_info_red.iterrows():
 
 
 
-print(shipment_json)
-print(warning_json)
+print(shipment_json_lst)
+print(warning_json_lst)
 
 
 # %%
 
 with open('data_for_backend/shipments.json', 'w') as fh:
-    json.dump(shipment_json, fh)
+    json.dump(shipment_json_lst, fh)
 
 with open('data_for_backend/warnings.json', 'w') as fh:
-    json.dump(warning_json, fh)
+    json.dump(warning_json_lst, fh)
 
 
 
