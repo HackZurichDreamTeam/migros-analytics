@@ -2,4 +2,4 @@ data/
 
 gitignore_note
 
-ds_service/pycache/
+**/__pycache__
