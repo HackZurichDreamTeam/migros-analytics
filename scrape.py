@@ -2,6 +2,7 @@ import requests
 import pandas as pd
 from bs4 import BeautifulSoup
 from datetime import datetime
+import time
 
 #!pip install webdriver-manager
 
@@ -10,8 +11,32 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
+import requests # 2
+import json # 3
 
-from convert_to_coord import convert_to_coord
+
+ggeocode = 'AIzaSyACn8ZsmhM9DjpK6MYUApfscEnQypC6LjY'
+
+#location from google
+def get_location_coordinates(location): # 4
+    # pass for now
+    # Define the base url
+    geo_url = f"https://maps.googleapis.com/maps/api/geocode/json?address={location}&key={ggeocode}" # 6
+    response = requests.get(geo_url) # 7
+    content = response.content.decode("utf8") # 8
+    geo_js = json.loads(content) # 9
+    geo_status = geo_js["status"] # 10
+
+    if geo_status == "OK": # 11
+        geo_elements = geo_js["results"][0] # 12
+        geometry = geo_elements["geometry"] # 13
+        location_coordinates = geometry["location"] # 14
+        location_lat = location_coordinates["lat"] # 15
+        location_long = location_coordinates["lng"] # 16
+        return (location_lat,location_long)
+    else:
+        return (None,None)
+
 
 #get driver start
 def scrapeWeather():
@@ -23,7 +48,9 @@ def scrapeWeather():
     )
     finally:
         print('loaded')
-        driver.find_element_by_xpath("//select/option[@value='60']").click()
+
+        #comment this for now..
+        #driver.find_element_by_xpath("//select/option[@value='60']").click()
         soup = BeautifulSoup(driver.page_source, 'html.parser')
     """Scraper getting each row"""
     all = soup.findAll("tbody")[2]
@@ -59,6 +86,39 @@ def scrapeWeather():
 
     df = pd.DataFrame(rest_info, columns = ['Event_type','Issued_time','Country','Areas','Regions','Date'])
     df['Issued_time'] = df["Issued_time"].apply(lambda x: x.split("#")[0])
-    df['coordinates'] = convert_to_coord(df['Regions'] +", "+ df["Areas"] + ", " + df["Country"])
-    df.to_csv("scraped_weather.csv",mode='a', index=False,header=False)
+    df['coordinates'] = df["Areas"] + ", " + df["Country"]
+    df["geo_location"] = df["coordinates"].apply(get_location_coordinates)
+    df.to_csv("scraped_weather.csv",mode='a', index=False,header=False)#insert header=False
+    return
+
+
+def scrapePirates():
+    URL = "https://www.icc-ccs.org/index.php/piracy-reporting-centre/live-piracy-report"
+    rest_info  =[]
+    r = requests.get(URL) 
+    soup = BeautifulSoup(r.content, 'html.parser')
+    all = soup.find("tbody")
+    row = all.findAll('tr')
+    for i in row:
+            infos_row = i.findAll('td')
+            for index,j in enumerate(infos_row):
+                if index == 0:
+                    attack_number =  j.text.replace('\n','').replace('\t','').replace('\r','')
+                if index == 1:
+                    narrations = j.text.replace('\n','').replace('\t','').replace('\r','')
+                if index ==2:
+                    date_of_incident = j.text.replace('\n','').replace('\t','').replace('\r','')
+                if index >2:
+                    continue
+            try: 
+                rest_info.append([attack_number,narrations,date_of_incident,datetime.today().strftime('%Y-%m-%d %H:%M')])
+            except:
+                continue
+
+    df_pirates = pd.DataFrame(rest_info, columns = ['attack_nr','text','date_of_incident','scrape_date'])
+    df_pirates['text'] = df_pirates["text"].apply(lambda x: x.split("Posn: ")[1])
+    df_pirates['location'] = df_pirates["text"].apply(lambda x: x.split(",")[1].split(".")[0] if ":" in x.split(",")[0] else x.split(".")[0])
+    df_pirates["geo_location"] = df_pirates["location"].apply(get_location_coordinates)
+
+    df_pirates.to_csv("scraped_pirates.csv",mode='a', index=False,header=False)
     return
