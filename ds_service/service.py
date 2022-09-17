@@ -10,7 +10,7 @@ import pandas as pd
 
 def get_shipment_information(selected_date: str, current_time="2021-08-15 00:00") -> pd.DataFrame:
     if selected_date is None:
-        selected_date = "2021-08-15 00:00"
+        selected_date = current_time
 
     selected_date = pd.to_datetime(selected_date)
     current_time = pd.to_datetime(current_time)
@@ -57,7 +57,7 @@ def get_shipment_information(selected_date: str, current_time="2021-08-15 00:00"
     shipment_info['predicted_latitude'] = shipment_info['predicted_location'].apply(lambda x: x[0])
     shipment_info['predicted_longitude'] = shipment_info['predicted_location'].apply(lambda x: x[1])
 
-    col_to_keep = ['predicted_latitude', 'predicted_longitude', 'last_latitude', 'last_longitude', 'schiff', 'empfaenger', 'empfaenger_plz', 'empfaenger_ort', 'termin_empfaenger', 'bb_name']
+    col_to_keep = ['predicted_latitude', 'predicted_longitude', 'last_latitude', 'last_longitude', 'schiff', 'empfaenger', 'empfaenger_plz', 'empfaenger_ort', 'termin_empfaenger', 'bb_name', 'pod_name', 'pod_land']
 
     shipment_info = shipment_info[col_to_keep]
 
