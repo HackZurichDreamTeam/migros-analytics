@@ -141,12 +141,13 @@ shipment_info_red.to_pickle('data_for_backend/shipment_info_weather_warning.pkl'
 #%%
 # generate a json
 print(shipment_info_red.columns)
-shipment_json = init_shipment_json()
-warning_json = init_warning_json()
+shipment_json_lst = init_shipment_json()
+warning_json_lst = init_warning_json()
 
 for idx, row in shipment_info_red.iterrows():
-    shipment_json['warning_id'].append(idx)
-    shipment_json['port_destination_name'].append(row['pod_name'])
+    shipment_json = {
+        'warning_id': idx,
+        'port_destination_name' = row['pod_name'])
     shipment_json['port_destination_country'].append(row['pod_land'])
     shipment_json['destination_location'].append(row['empfaenger_ort'])
     shipment_json['port_of_loading'].append(row['pol_name'])
@@ -154,12 +155,18 @@ for idx, row in shipment_info_red.iterrows():
     shipment_json['product_name'].append(row['bb_name'])
 
     warning_json = {
-        'last_location'].append((row['last_latitude'], row['last_longitude']))
-        warning_json['predicted_current_location'].append((row['predicted_latitude'], row['predicted_longitude']))
-        warning_json['warning_text'].append(row["warning"])
-        warning_json['event'].append(row['Event'])
-        warning_json['time'].append(time_)
+        'warning_id': idx,
+        'warning_text': row["warning"],
+        'event': row['Event'],
+        'last_location': {
+            'last_latitude': row['last_latitude'],
+            'last_longitude': row['last_longitude']},
+        'predicted_current_location': {
+            'predicted_latitude': row['predicted_latitude'],
+            'predicted_longitude': row['predicted_longitude']},
+        'time': time_
     }
+    warning_json_lst.append(warning_json)
 
 
 
