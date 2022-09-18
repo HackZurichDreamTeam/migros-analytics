@@ -72,8 +72,8 @@ def init_warning_json():
 
 # %%
 time_ = None
-weather_warning_path = 'scraped_weather.csv'
-pirates_warning_path = 'scraped_pirates.csv'
+weather_warning_path = '../scraping-repo/scraped_weather.csv'
+pirates_warning_path = '../scraping-repo/scraped_pirates.csv'
 shipment_info = get_shipment_information(time_)
 
 weather_warning = pd.read_csv(weather_warning_path)

@@ -94,7 +94,7 @@ def generate_warning_predictions(weather_pred, current_time, threshold_dist):
 
 if __name__ == '__main__':
     current_time = "2021-08-15 00:00"
-    weather_pred_path = 'scraped_weather_predictions.csv'
+    weather_pred_path = 'scraped_data_example_for_app/scraped_weather_predictions.csv'
     weather_pred = pd.read_csv(weather_pred_path)
 
     threshold_dist = 4000
