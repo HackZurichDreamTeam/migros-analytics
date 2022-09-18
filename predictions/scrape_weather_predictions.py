@@ -47,7 +47,7 @@ def get_tropical_cyclones_forcast():
         soup = BeautifulSoup(page.content, 'html.parser')
         html = list(soup.children)[2]
         text = soup.find(class_="textbackground")
-        print(text)
+        #print(text)
         output = text.string.split('\n')
         formation_info = []
         add_text = False
