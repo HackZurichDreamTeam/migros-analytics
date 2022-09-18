@@ -4,7 +4,7 @@ To view our finished project see: [Supply Chain Resilience: Real-time Risk Warni
 
 To use this repository download the migros shipping data ('gis_opex_international_bestellu.csv', etc.) in a folder called `data` inside data_science. Some basic analysis of this data can be found in the notebooks folder. 
 
-As we did not have historical warning data but were only able to webscape current warnings for the purpose of this app and our analysis we have assumed that the current weather and piracy warnings that we have obtained are for the date "2021-08-15 00:00" which is in the middle of our migros data set. This allows us to show how real time warnings could be used to estimate real time shipment impacts. 
+As we did not have historical warning data but were only able to webscrape current warnings for the purpose of this app and our analysis we have assumed that the current weather and piracy warnings that we have obtained are for the date "2021-08-15 00:00" which is in the middle of our migros data set. This allows us to show how real time warnings could be used to estimate shipment impacts. 
 
 We have a separate repository [scraping-repo](https://github.com/HackZurichDreamTeam/scraping-repo) for data scraping. It is constantly scraping the web for data on storms and piracy information. Here we include the `csv` files from our initial web-scrapping runs in `scraped_data_example`.
 
